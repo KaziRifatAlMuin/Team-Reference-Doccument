@@ -17,7 +17,15 @@ def get_sections():
             print(subsection_name)
             relative_path = os.path.join(root, file_name)
             number_of_lines = len(open(relative_path).readlines())
-            hash_value = str(subprocess.check_output("Hash < \"" + relative_path + "\"", shell=True))[2:-3]
+            try:
+                # Try to use md5sum command (available on Linux/WSL)
+                hash_output = subprocess.check_output("md5sum \"" + relative_path + "\"", shell=True)
+                hash_value = str(hash_output.decode('utf-8').split()[0])[:8]  # Get first 8 chars of hash
+            except:
+                # Fallback to Python's hashlib if md5sum is not available
+                import hashlib
+                with open(relative_path, 'rb') as f:
+                    hash_value = hashlib.md5(f.read()).hexdigest()[:8]
             subsections.append((relative_path, subsection_name, number_of_lines, hash_value))
     return sections[1:]
 
