@@ -1,68 +1,46 @@
-ll powmod(ll a, ll p, ll m) {///(a^p % m)
-  ll result = 1;
-  a %= m;
-  while (p) {
-    if (p & 1)
-      result = (vll)result * a % m;
-    a = (vll)a * a % m;
-    p >>= 1;
+namespace rho {
+  ll mul(ll a, ll b, ll mod) {
+    ll ret = __int128(a) * b - mod * (ll)(1.L / mod * a * b);
+    return ret + mod * (ret < 0) - mod * (ret >= (ll)mod);
   }
-  return result;
-}
-bool check_composite(ll n, ll a, ll d, int s) {
-  ll x = powmod(a, d, n);
-  if (x == 1 || x == n - 1)
-    return false;
-  for (int r = 1; r < s; r++) {
-    x = (vll)x * x % n;
-    if (x == n - 1)
-      return false;
+
+  ll bigMod(ll a, ll e, ll mod) {
+    ll ret = 1;
+    while (e) {
+      if (e & 1) ret = mul(ret, a, mod);
+      a = mul(a, a, mod);
+      e >>= 1;
+    }
+    return ret;
   }
-  return true;
-}
-bool MillerRabin(ll n) {
-  if (n < 2) return false;
-  int r = 0;
-  ll d = n - 1;
-  while ((d & 1) == 0) {
-    d >>= 1;
-    r++;
+  bool isPrime(ll n) {
+    if (n < 2 or n % 6 % 4 != 1) return (n | 1) == 3;
+    ll a[] = {2, 325, 9375, 28178, 450775, 9780504, 1795265022};
+    ll s = __builtin_ctzll(n - 1), d = n >> s;
+    for (ll x : a) {
+      ll p = bigMod(x % n, d, n), i = s;
+      while (p != 1 and p != n - 1 and x % n and i--) p = mul(p, p, n);
+      if ((p != n - 1) and i != s) return 0;
+    }
+    return 1;
   }
-  for (int a : {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}) {
-    if (n == a) return true;
-    if (check_composite(n, a, d, r))
-      return false;
+  ll pollard(ll n) {
+    auto f = [&](ll x) { return mul(x, x, n) + 1; };
+    ll x = 0, y = 0, t = 0, prod = 2, i = 1, q;
+    while (t++ % 40 or gcd(prod, n) == 1) {
+      if (x == y) x = ++i, y = f(x);
+      if ((q = mul(prod, max(x, y) - min(x, y), n))) prod = q;
+      x = f(x), y = f(f(y));
+    }
+    return gcd(prod, n);
   }
-  return true;
-}
-ll mult(ll a, ll b, ll mod) {
-  return (vll)a * b % mod;
-}
-ll f(ll x, ll c, ll mod) {
-  return (mult(x, x, mod) + c) % mod;
-}
-ll rho(ll n) {
-  if (n % 2 == 0) return 2;
-  ll x = myrand() % n + 1, y = x, c = myrand() % n + 1, g = 1;
-  while (g == 1) {
-    x = f(x, c, n);
-    y = f(y, c, n);
-    y = f(y, c, n);
-    g = __gcd(abs(x - y), n);
+  vector<ll> factors(ll n) {  // return unsorted factors
+    if (n == 1) return {};
+    if (isPrime(n)) return {n};
+    ll x = pollard(n);
+    auto l = factors(x), r = factors(n / x);
+    l.insert(l.end(), r.begin(), r.end());
+    return l;
   }
-  return g;
-}
-set<ll>prime;
-void prime_factorization(ll n) {
-  if (n == 1) return;
-  if (MillerRabin(n)) {
-    prime.insert(n);
-    return;
-  }
-  ll x = n;
-  while (x == n) x = rho(n);
-  prime_factorization(x);
-  prime_factorization(n / x);
-}
-//call prime_factorization(n) for prime factors.
-//call MillerRabin(n) to check if prime.
+
+};

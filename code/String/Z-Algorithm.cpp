@@ -1,19 +1,11 @@
-void compute_z_function(const char*S,int N){
-  int L=0,R=0;
-  for(int i=1;i<N;++i){
-    if(i>R){
-      L=R=i;
-      while(R<N && S[R-L]==S[R])++R;
-      Z[i]=R-L,--R;
-    }
-    else{
-      int k=i-L;
-      if(Z[k]<R-i+1)Z[i]=Z[k];
-      else{
-        L=i;
-        while(R<N && S[R-k]==S[R])++R;
-        Z[i]=R-L,--R;
-      }
-    }
+vector<int> z_function(string s) {
+  int n = s.size();
+  vector<int> z(n);
+  int l = 0, r = 0;
+  for (int i = 1; i < n; i++) {
+    if (i < r) z[i] = min(r - i, z[i - l]);
+    while (i + z[i] < n && s[z[i]] == s[i + z[i]]) z[i]++;
+    if (i + z[i] > r) l = i, r = i + z[i];
   }
+  return z;
 }

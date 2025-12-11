@@ -1,43 +1,31 @@
-/*components: number of SCC.
-sz: size of each SCC.
-comp: component number of each node.
-Create reverse graph.
-Run find_scc() to find SCC.
-Might need to create condensation graph by create_condensed().
-Think about indeg/outdeg
-for multiple test cases- clear adj/radj/comp/vis/sz/topo/condensed.*/
-vector<int>adj[mx], radj[mx];
+const int mxn = 100003;
+vector<int> adj[mxn], stak;
+int tin[mxn], low[mxn], n, color[mxn];// component no 1 based;
+bool onstack[mxn];
+int timer = 0, sccCount = 0;
+void dfs(int at) {
+  stak.push_back(at);
+  onstack[at] = true;
+  tin[at] = low[at] = ++timer;
 
-int comp[mx], vis[mx], sz[mx], components;
-vector<int>topo;
-void dfs(int u) {
-  vis[u] = 1;
-  for (int v : adj[u])
-    if (!vis[v]) dfs(v);
-  topo.push_back(u);
+  for (int to : adj[at]) {
+    if (!tin[to]) {
+      dfs(to);
+      low[at] = min(low[at], low[to]);
+    } else if (onstack[to])
+      low[at] = min(low[at], tin[to]);
+  }
+
+  if (tin[at] == low[at]) {
+    ++sccCount;
+    while (1) {
+      int node = stak.back();
+      stak.pop_back();
+      onstack[node] = false;
+      color[node] = sccCount;
+      if (node == at) break;
+    }
+  }
 }
-void dfs2(int u, int val) {
-  comp[u] = val;
-  sz[val]++;
-  for (int v : radj[u])
-    if (comp[v] == -1)
-      dfs2(v, val);
-}
-void find_scc(int n) {
-  memset(vis, 0, sizeof vis);
-  memset(comp, -1, sizeof comp);
-  for (int i = 1;i <= n;i++)
-    if (!vis[i])
-      dfs(i);
-  reverse(topo.begin(), topo.end());
-  for (int u : topo)
-    if (comp[u] == -1)
-      dfs2(u, ++components);
-}
-vector<int>condensed[mx];
-void create_condensed(int n) {
-  for (int i = 1;i <= n;i++)
-    for (int v : adj[i])
-      if (comp[i] != comp[v])
-        condensed[comp[i]].push_back(comp[v]);
-}
+for (int i = 1; i <= n; i++)
+    if (!tin[i]) dfs(i);

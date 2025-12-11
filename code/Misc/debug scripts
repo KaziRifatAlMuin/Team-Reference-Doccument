@@ -1,0 +1,70 @@
+// SETUP (run once): mkdir -p ~/bin && chmod +x ~/bin/* && echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+
+// ~/bin/build - Compile C++ file with runtime error detection
+// Usage: build <name> [flags]
+// Example: build solution (compiles solution.cpp to executable ./solution)
+#!/bin/bash
+g++ -std=gnu++17 -Wall -O2 -g -fsanitize=undefined,address $2 "$1.cpp" -o "$1"
+
+// ~/bin/test - Run program on multiple test inputs
+// Usage: test <name>
+// Needs: <name>.in0, <name>.in1, <name>.in2, etc. (your test input files)
+// Does: Runs program on each .in file and shows output
+#!/bin/bash
+build $1 || exit 1
+for INP in $1.in*; do
+    echo "INPUT: $INP"; cat $INP
+    echo "OUTPUT:"; ./$1 < $INP
+done
+
+// ~/bin/debug - Compile with debug prints enabled and run
+// Usage: debug <name>
+// Use in code: #ifdef SMIE cerr << "debug info" << endl; #endif
+#!/bin/bash
+build "$1" -DSMIE && "./$1"
+
+// ~/bin/stress - Auto-test until your solution fails vs brute force
+// Usage: stress <name>
+// Needs 3 files: <name>.cpp (your solution), <name>_brute.cpp (correct slow solution), <name>_gen.cpp (random input generator)
+// Generator must use argv[1] as seed: int seed = atoi(argv[1]); srand(seed);
+// Does: Generates random inputs and compares outputs until mismatch found
+#!/bin/bash
+build $1 && build $1_gen && build $1_brute || exit 1
+for((i=1;;i++)); do
+    echo "Test $i"
+    ./$1_gen $i > inp # generate random input
+    ./$1 < inp > out1 # your solution
+    ./$1_brute < inp > out2 # brute force
+    diff -w out1 out2 || break # stop when outputs differ
+done
+echo "FAILED on:"; cat inp; echo "Your:"; cat out1; echo "Expected:"; cat out2
+
+// ==================== QUICK START GUIDE ====================
+
+// 1. SETUP (once): mkdir -p ~/bin && chmod +x ~/bin/* && echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+
+// 2. FILE STRUCTURE:
+// sol.cpp          - your solution
+// sol.in0, sol.in1 - test inputs (for test command)
+// sol_gen.cpp      - random input generator (for stress command)
+// sol_brute.cpp    - brute force solution (for stress command)
+
+// 3. WORKFLOW:
+// Write code: vim sol.cpp
+// Create tests: echo "5 10" > sol.in0
+// Compile & run: build sol && ./sol < sol.in0
+// Test all cases: test sol
+// Debug: add #ifdef SMIE cerr<<"x="<<x; #endif in code, then: debug sol
+// Stress test: stress sol
+
+// 4. GENERATOR TEMPLATE (sol_gen.cpp):
+#include <bits/stdc++.h>
+using namespace std;
+int main(int argc, char* argv[]) {
+    srand(atoi(argv[1])); // seed from argument
+    int n = rand() % 100 + 1;
+    cout << n << endl;
+    return 0;
+}
+
+// COMMANDS: build sol | test sol | debug sol | stress sol
