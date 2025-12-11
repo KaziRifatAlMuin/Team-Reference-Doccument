@@ -2,7 +2,7 @@ const int N = 1e5 + 7, mod = 1e9 + 7;
 ll cnt[N];  // cnt[x] = frequency of x in the input
 ll d[N];    // d[i]   = # of input elements divisible by i
 ll f[N];    // f[i]   = # of non-empty subseq’s all divisible by i
-ll mob[N];  // Möbius function μ(i)
+ll mob[N];  // Mobius function mu(i)
 ll power(ll a, ll b) { }
 void coprime_subsequence_mobius(){
     int n; cin >> n;

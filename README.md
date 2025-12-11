@@ -98,6 +98,34 @@ For users on Windows, you can use Windows Subsystem for Linux (WSL) to access a 
 
 ### Troubleshooting
 
+**Issue: "pdflatex: gave an error in previous invocation" or "Nothing to do"**
+
+Latexmk caches build state and may refuse to rebuild after errors. Clean generated files and force rebuild:
+```
+latexmk -C
+python3 generate_pdf.py
+```
+
+Or use the force flag to rebuild everything:
+```
+latexmk -pdf -shell-escape -f notebook.tex
+```
+
+**Issue: "I can't write on file `notebook.pdf`"**
+
+This error occurs when the PDF file is already open in a viewer and locked. To fix:
+1. Close any PDF viewer that has `notebook.pdf` open
+2. Run the script again:
+   ```
+   python3 generate_pdf.py
+   ```
+
+Alternatively, delete the old PDF before generating a new one:
+```
+rm notebook.pdf
+python3 generate_pdf.py
+```
+
 **Issue: "Hash: not found" error**
 
 The original script used a custom `Hash` command that may not be available on all systems. The script has been updated to use `md5sum` (standard on Linux) with a fallback to Python's hashlib. If you encounter this error with an older version of the script, update the `generate_pdf.py` file or ensure `md5sum` is installed:

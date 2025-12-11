@@ -257,6 +257,7 @@ T ray_ray_distance(PT as, PT ad, PT bs, PT bd) {
   ans = min(ans, dist_from_point_to_ray(bs, bd, as));
   return ans;
 }
+
 // CONVEX HULL
 vector<PT> convex_hull(vector<PT> &p) {
   if (p.size() <= 1) return p;
@@ -345,6 +346,7 @@ struct circle {
   T area() { return PI * r * r; }
   T circumference() { return 2.0 * PI * r; }
 };
+
 //0 if outside, 1 if on circumference, 2 if inside circle
 int circle_point_relation(PT p, T r, PT b) {
   T d = dist(p, b);
@@ -398,89 +400,7 @@ vector<PT> circle_circle_intersection(PT a, T r, PT b, T R) {
   if (y > 0) ret.push_back(a + v * x - rotateccw90(v) * y);
   return ret;
 }
-// returns two circle c1, c2 through points a, b and of radius r
-// 0 if there is no such circle, 1 if one circle, 2 if two circle
-int get_circle(PT a, PT b, T r, circle &c1, circle &c2) {
-  vector<PT> v = circle_circle_intersection(a, r, b, r);
-  int t = v.size();
-  if (!t) return 0;
-  c1.p = v[0], c1.r = r;
-  if (t == 2) c2.p = v[1], c2.r = r;
-  return t;
-}
-// returns two circle c1, c2 which is tangent to line u,  goes through
-// point q and has radius r1; 0 for no circle, 1 if c1 = c2 , 2 if c1 != c2
-int get_circle(line u, PT q, T r1, circle &c1, circle &c2) {
-  T d = dist_from_point_to_line(u.a, u.b, q);
-  if (sign(d - r1 * 2.0) > 0) return 0;
-  if (sign(d) == 0) {
-    cout << u.v.x << ' ' << u.v.y << '\n';
-    c1.p = q + rotateccw90(u.v).truncate(r1);
-    c2.p = q + rotatecw90(u.v).truncate(r1);
-    c1.r = c2.r = r1;
-    return 2;
-  }
-  line u1 = line(u.a + rotateccw90(u.v).truncate(r1), u.b + rotateccw90(u.v).truncate(r1));
-  line u2 = line(u.a + rotatecw90(u.v).truncate(r1), u.b + rotatecw90(u.v).truncate(r1));
-  circle cc = circle(q, r1);
-  PT p1, p2; vector<PT> v;
-  v = circle_line_intersection(q, r1, u1.a, u1.b);
-  if (!v.size()) v = circle_line_intersection(q, r1, u2.a, u2.b);
-  v.push_back(v[0]);
-  p1 = v[0], p2 = v[1];
-  c1 = circle(p1, r1);
-  if (p1 == p2) {
-    c2 = c1;
-    return 1;
-  }
-  c2 = circle(p2, r1);
-  return 2;
-}
-// returns area of intersection between two circles
-T circle_circle_area(PT a, T r1, PT b, T r2) {
-  T d = (a - b).norm();
-  if(r1 + r2 < d + eps) return 0;
-  if(r1 + d < r2 + eps) return PI * r1 * r1;
-  if(r2 + d < r1 + eps) return PI * r2 * r2;
-  T theta_1 = acos((r1 * r1 + d * d - r2 * r2) / (2 * r1 * d)), 
-    theta_2 = acos((r2 * r2 + d * d - r1 * r1)/(2 * r2 * d));
-  return r1 * r1 * (theta_1 - sin(2 * theta_1)/2.) + r2 * r2 * (theta_2 - sin(2 * theta_2)/2.);
-}
-// tangent lines from point q to the circle
-int tangent_lines_from_point(PT p, T r, PT q, line &u, line &v) {
-  int x = sign(dist2(p, q) - r * r);
-  if (x < 0) return 0; // point in cricle
-  if (x == 0) { // point on circle
-    u = line(q, q + rotateccw90(q - p));
-    v = u;
-    return 1;
-  }
-  T d = dist(p, q);
-  T l = r * r / d;
-  T h = sqrt(r * r - l * l);
-  u = line(q, p + ((q - p).truncate(l) + (rotateccw90(q - p).truncate(h))));
-  v = line(q, p + ((q - p).truncate(l) + (rotatecw90(q - p).truncate(h))));
-  return 2;
-}
-// returns outer tangents line of two circles
-// if inner == 1 it returns inner tangent lines
-int tangents_lines_from_circle(PT c1, T r1, PT c2, T r2, bool inner, line &u, line &v) {
-  if (inner) r2 = -r2;
-  PT d = c2 - c1;
-  T dr = r1 - r2, d2 = d.norm2(), h2 = d2 - dr * dr;
-  if (d2 == 0 || h2 < 0) {
-    assert(h2 != 0);
-    return 0;
-  }
-  vector<pair<PT, PT>>out;
-  for (int tmp: {- 1, 1}) {
-    PT v = (d * dr + rotateccw90(d) * sqrt(h2) * tmp) / d2;
-    out.push_back({c1 + v * r1, c2 + v * r2});
-  }
-  u = line(out[0].first, out[0].second);
-  if (out.size() == 2) v = line(out[1].first, out[1].second);
-  return 1 + (h2 > 0);
-}
+
 // -1 if strictly inside, 0 if on the polygon, 1 if strictly outside
 int is_point_in_triangle(PT a, PT b, PT c, PT p) {
   if (sign(cross(b - a,c - a)) < 0) swap(b, c);
@@ -610,6 +530,7 @@ int extreme_vertex(vector<PT> &p, const PT &z, const int top) { // O(log n)
   if (dot(p[l], z) > ans) ans = dot(p[l], z), id = l;
   return id;
 }
+
 // maximum distance from any point on the perimeter to another point on the perimeter
 T diameter(vector<PT> &p) {
   int n = (int)p.size();
@@ -626,248 +547,4 @@ T diameter(vector<PT> &p) {
     i++;
   }
   return sqrt(ans);
-}
-// given n points, find the minimum enclosing circle of the points
-// call convex_hull() before this for faster solution
-// expected O(n)
-circle minimum_enclosing_circle(vector<PT> &p) {
-  random_shuffle(p.begin(), p.end());
-  int n = p.size();
-  circle c(p[0], 0);
-  for (int i = 1; i < n; i++) {
-    if (sign(dist(c.p, p[i]) - c.r) > 0) {
-      c = circle(p[i], 0);
-      for (int j = 0; j < i; j++) {
-        if (sign(dist(c.p, p[j]) - c.r) > 0) {
-          c = circle((p[i] + p[j]) / 2, dist(p[i], p[j]) / 2);
-          for (int k = 0; k < j; k++) {
-            if (sign(dist(c.p, p[k]) - c.r) > 0) {
-              c = circle(p[i], p[j], p[k]);
-            }
-          }
-        }
-      }
-    }
-  }
-  return c;
-}
-// not necessarily convex, boundary is included in the intersection
-// returns total intersected length
-// it returns the sum of the lengths of the portions of the line that are inside the polygon
-T polygon_line_intersection(vector<PT> p, PT a, PT b) {
-  int n = p.size();
-  p.push_back(p[0]);
-  line l = line(a, b);
-  T ans = 0.0;
-  vector< pair<T, int> > vec;
-  for (int i = 0; i < n; i++) {
-    int s1 = orientation(a, b, p[i]);
-    int s2 = orientation(a, b, p[i + 1]);
-    if (s1 == s2) continue;
-    line t = line(p[i], p[i + 1]);
-    PT inter = (t.v * l.c - l.v * t.c) / cross(l.v, t.v);
-    T tmp = dot(inter, l.v);
-    int f;
-    if (s1 > s2) f = s1 && s2 ? 2 : 1;
-    else f = s1 && s2 ? -2 : -1;
-    vec.push_back(make_pair((f > 0 ? tmp - eps : tmp + eps), f)); // keep eps very small like 1e-12
-  }
-  sort(vec.begin(), vec.end());
-  for (int i = 0, j = 0; i + 1 < (int)vec.size(); i++){
-    j += vec[i].second;
-    if (j) ans += vec[i + 1].first - vec[i].first; // if this portion is inside the polygon
-    // else ans = 0; // if we want the maximum intersected length which is totally inside the polygon, uncomment this and take the maximum of ans
-  }
-  ans = ans / sqrt(dot(l.v, l.v));
-  p.pop_back();
-  return ans;
-}
-// given a convex polygon p, and a line ab and the top vertex of the polygon
-// returns the intersection of the line with the polygon
-// it returns the indices of the edges of the polygon that are intersected by the line
-// so if it returns i, then the line intersects the edge (p[i], p[(i + 1) % n])
-array<int, 2> convex_line_intersection(vector<PT> &p, PT a, PT b, int top) {
-  int end_a = extreme_vertex(p, (a - b).perp(), top);
-  int end_b = extreme_vertex(p, (b - a).perp(), top);
-  auto cmp_l = [&](int i) { return orientation(a, p[i], b); };
-  if (cmp_l(end_a) < 0 || cmp_l(end_b) > 0)
-    return {-1, -1}; // no intersection
-  array<int, 2> res;
-  for (int i = 0; i < 2; i++) {
-    int lo = end_b, hi = end_a, n = p.size();
-    while ((lo + 1) % n != hi) {
-      int m = ((lo + hi + (lo < hi ? 0 : n)) / 2) % n;
-      (cmp_l(m) == cmp_l(end_b) ? lo : hi) = m;
-    }
-    res[i] = (lo + !cmp_l(hi)) % n;
-    swap(end_a, end_b);
-  }
-  if (res[0] == res[1]) return {res[0], -1}; // touches the vertex res[0]
-  if (!cmp_l(res[0]) && !cmp_l(res[1])) 
-    switch ((res[0] - res[1] + (int)p.size() + 1) % p.size()) {
-      case 0: return {res[0], res[0]}; // touches the edge (res[0], res[0] + 1)
-      case 2: return {res[1], res[1]}; // touches the edge (res[1], res[1] + 1)
-    }
-  return res; // intersects the edges (res[0], res[0] + 1) and (res[1], res[1] + 1)
-}
-
-pair<PT, int> point_poly_tangent(vector<PT> &p, PT Q, int dir, int l, int r) {
-  while (r - l > 1) {
-    int mid = (l + r) >> 1;
-    bool pvs = orientation(Q, p[mid], p[mid - 1]) != -dir;
-    bool nxt = orientation(Q, p[mid], p[mid + 1]) != -dir;
-    if (pvs && nxt) return {p[mid], mid};
-    if (!(pvs || nxt)) {
-      auto p1 = point_poly_tangent(p, Q, dir, mid + 1, r);
-      auto p2 = point_poly_tangent(p, Q, dir, l, mid - 1);
-      return orientation(Q, p1.first, p2.first) == dir ? p1 : p2;
-    }
-    if (!pvs) {
-      if (orientation(Q, p[mid], p[l]) == dir)  r = mid - 1;
-      else if (orientation(Q, p[l], p[r]) == dir) r = mid - 1;
-      else l = mid + 1;
-    }
-    if (!nxt) {
-      if (orientation(Q, p[mid], p[l]) == dir)  l = mid + 1;
-      else if (orientation(Q, p[l], p[r]) == dir) r = mid - 1;
-      else l = mid + 1;
-    }
-  }
-  pair<PT, int> ret = {p[l], l};
-  for (int i = l + 1; i <= r; i++) ret = orientation(Q, ret.first, p[i]) != dir ? make_pair(p[i], i) : ret;
-  return ret;
-}
-// (ccw, cw) tangents from a point that is outside this convex polygon
-// returns indexes of the points
-// ccw means the tangent from Q to that point is in the same direction as the polygon ccw direction
-pair<int, int> tangents_from_point_to_polygon(vector<PT> &p, PT Q){
-  int ccw = point_poly_tangent(p, Q, 1, 0, (int)p.size() - 1).second;
-  int cw = point_poly_tangent(p, Q, -1, 0, (int)p.size() - 1).second;
-  return make_pair(ccw, cw);
-}
-
-// minimum distance from a point to a convex polygon
-// it assumes point lie strictly outside the polygon
-T dist_from_point_to_polygon(vector<PT> &p, PT z) {
-  T ans = inf;
-  int n = p.size();
-  if (n <= 3) {
-    for(int i = 0; i < n; i++) ans = min(ans, dist_from_point_to_seg(p[i], p[(i + 1) % n], z));
-    return ans;
-  }
-  auto [r, l] = tangents_from_point_to_polygon(p, z);
-  if(l > r) r += n;
-  while (l < r) {
-    int mid = (l + r) >> 1;
-    T left = dist2(p[mid % n], z), right= dist2(p[(mid + 1) % n], z);
-    ans = min({ans, left, right});
-    if(left < right) r = mid;
-    else l = mid + 1;
-  }
-  ans = sqrt(ans);
-  ans = min(ans, dist_from_point_to_seg(p[l % n], p[(l + 1) % n], z));
-  ans = min(ans, dist_from_point_to_seg(p[l % n], p[(l - 1 + n) % n], z));
-  return ans;
-}
-// minimum distance from convex polygon p to line ab
-// returns 0 is it intersects with the polygon
-// top - upper right vertex
-T dist_from_polygon_to_line(vector<PT> &p, PT a, PT b, int top) { //O(log n)
-  PT orth = (b - a).perp();
-  if (orientation(a, b, p[0]) > 0) orth = (a - b).perp();
-  int id = extreme_vertex(p, orth, top);
-  if (dot(p[id] - a, orth) > 0) return 0.0; //if orth and a are in the same half of the line, then poly and line intersects
-  return dist_from_point_to_line(a, b, p[id]); //does not intersect
-}
-// minimum distance from a convex polygon to another convex polygon
-// the polygon doesnot overlap or touch
-T dist_from_polygon_to_polygon(vector<PT> &p1, vector<PT> &p2) { // O(n log n)
-  T ans = inf;
-  for (int i = 0; i < p1.size(); i++) {
-    ans = min(ans, dist_from_point_to_polygon(p2, p1[i]));
-  }
-  for (int i = 0; i < p2.size(); i++) {
-    ans = min(ans, dist_from_point_to_polygon(p1, p2[i]));
-  }
-  return ans;
-}
-// calculates the area of the union of n polygons (not necessarily convex). 
-// the points within each polygon must be given in CCW order.
-// complexity: O(N^2), where N is the total number of points
-T rat(PT a, PT b, PT p) {
-    return !sign(a.x - b.x) ? (p.y - a.y) / (b.y - a.y) : (p.x - a.x) / (b.x - a.x);
- };
-T polygon_union(vector<vector<PT>> &p) {
-  int n = p.size();
-  T ans=0;
-  for(int i = 0; i < n; ++i) {
-    for (int v = 0; v < (int)p[i].size(); ++v) {
-      PT a = p[i][v], b = p[i][(v + 1) % p[i].size()];
-      vector<pair<T, int>> segs;
-      segs.emplace_back(0,  0), segs.emplace_back(1,  0);
-      for(int j = 0; j < n; ++j) {
-        if(i != j) {
-          for(size_t u = 0; u < p[j].size(); ++u) {
-            PT c = p[j][u], d = p[j][(u + 1) % p[j].size()];
-            int sc = sign(cross(b - a, c - a)), sd = sign(cross(b - a, d - a));
-            if(!sc && !sd) {
-              if(sign(dot(b - a, d - c)) > 0 && i > j) {
-                segs.emplace_back(rat(a, b, c), 1), segs.emplace_back(rat(a, b, d),  -1);
-              }
-            } 
-            else {
-              T sa = cross(d - c, a - c), sb = cross(d - c, b - c);
-              if(sc >= 0 && sd < 0) segs.emplace_back(sa / (sa - sb), 1);
-              else if(sc < 0 && sd >= 0) segs.emplace_back(sa / (sa - sb),  -1);
-            }
-          }
-        }
-      }
-      sort(segs.begin(),  segs.end());
-      T pre = min(max(segs[0].first, 0.0), 1.0), now, sum = 0;
-      int cnt = segs[0].second;
-      for(int j = 1; j < segs.size(); ++j) {
-        now = min(max(segs[j].first, 0.0), 1.0);
-        if (!cnt) sum += now - pre;
-        cnt += segs[j].second;
-        pre = now;
-      }
-      ans += cross(a, b) * sum;
-    }
-  }
-  return ans * 0.5;
-}
-// returns the area of the intersection of the circle with center c and radius r
-// and the triangle formed by the points c, a, b
-T _triangle_circle_intersection(PT c, T r, PT a, PT b) {
-  T sd1 = dist2(c, a), sd2 = dist2(c, b);
-  if(sd1 > sd2) swap(a, b), swap(sd1, sd2);
-  T sd = dist2(a, b);
-  T d1 = sqrtl(sd1), d2 = sqrtl(sd2), d = sqrt(sd);
-  T x = abs(sd2 - sd - sd1) / (2 * d);
-  T h = sqrtl(sd1 - x * x);
-  if(r >= d2) return h * d / 2;
-  T area = 0;
-  if(sd + sd1 < sd2) {
-    if(r < d1) area = r * r * (acos(h / d2) - acos(h / d1)) / 2;
-    else {
-      area = r * r * ( acos(h / d2) - acos(h / r)) / 2;
-      T y = sqrtl(r * r - h * h);
-      area += h * (y - x) / 2;
-    }
-  } 
-  else {
-    if(r < h) area = r * r * (acos(h / d2) + acos(h / d1)) / 2;
-    else {
-      area += r * r * (acos(h / d2) - acos(h / r)) / 2;
-      T y = sqrtl(r * r - h * h);
-      area += h * y / 2;
-      if(r < d1) {
-        area += r * r * (acos(h / d1) - acos(h / r)) / 2;
-        area += h * y / 2;
-      } 
-      else area += h * x / 2;
-    }
-  }
-  return area;
 }
