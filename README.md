@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains the KUET_Anarosh team's reference document, compiled from codes written by team members (Kazi Rifat Al Muin, Md. Arifur Rahman, Hassan Mohammad Naquibul Hoque) and most codes taken from KUET_Effervescent team members (Mehrab Hossain Opi, Arnob Sarker, Sharif Minhazul Islam).
+This repository contains the KUET_NlogN team's reference document, compiled from codes written by team members (Kazi Rifat Al Muin, Siyam Khan, Hassan Mohammad Naquibul Hoque) and most codes taken from KUET_Effervescent team members (Mehrab Hossain Opi, Arnob Sarker, Sharif Minhazul Islam).
 
 The notebook includes implementations of various algorithms and data structures, along with mathematical notes and resources.
 
@@ -85,16 +85,16 @@ For users on Windows, you can use Windows Subsystem for Linux (WSL) to access a 
 
 ### Step 5: Generate the PDF
 
-1. Navigate to the repository directory in WSL:
+1. Open the terminal from your folder directory
+2. Switch to Ubuntu if you are in windows.
    ```
-   cd /mnt/c/Users/USER/OneDrive/My\ Codes/Codes/_Notebook
+   wsl -d Ubuntu
    ```
-   Replace `USER` with your actual Windows username.
-2. Run the Python script:
+3. Run the Python script:
    ```
    python3 generate_pdf.py
    ```
-3. The PDF should be generated in the current directory.
+4. The PDF should be generated in the current directory.
 
 ### Troubleshooting
 
@@ -149,5 +149,6 @@ sudo apt install texlive-latex-extra texlive-fonts-recommended -y
 
 ## Credits
 
+- KUET_NlogNN
 - KUET_Anarosh
 - KUET_Effervescent
