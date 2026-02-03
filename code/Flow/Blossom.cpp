@@ -1,6 +1,7 @@
 // Finds Maximum matching in General Graph 
 // Complexity O(NM)
 // mate[i] = j means i is paired with j
+// Usage: `auto mate = Blossom(graph);` where `graph` is vector<vector<int>>.
 // source: https://codeforces.com/blog/entry/92339?#comment-810242
 vector<int> Blossom(vector<vector<int>>& graph) {
   //mate contains matched edge.

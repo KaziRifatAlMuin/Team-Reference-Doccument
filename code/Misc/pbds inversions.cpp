@@ -3,7 +3,6 @@
 #include<ext/pb_ds/tree_policy.hpp>
 using namespace std;
 using namespace __gnu_pbds;
-
 template <class T>
 using pbds = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 // greater for descending, less_equal for muiltiset

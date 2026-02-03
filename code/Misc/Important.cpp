@@ -13,7 +13,6 @@ while(fabs(right - left) > eps){
     else if(f1 < f2) right = m2;
     else left = m1, right = m2;
 }
-
 template <const int32_t MOD>
 struct modint {
   int32_t value;
@@ -41,7 +40,6 @@ template <int32_t MOD> istream & operator >> (istream & in, modint<MOD> &n) { re
 template <int32_t MOD> ostream & operator << (ostream & out, modint<MOD> n) { return out << n.value; }
 
 using mint = modint<mod>;
-
 struct combi{
   int n; vector<mint> facts, finvs, invs;
   combi(int _n): n(_n), facts(_n), finvs(_n), invs(_n){
@@ -59,7 +57,6 @@ struct combi{
   inline mint ncr(int n, int k) { return n < k or k < 0 ? 0 : facts[n] * finvs[k] * finvs[n-k]; }
 };
 combi C(N);
-
 ll power(ll a, ll b) {
     ll ans = 1;
     bool flag = (a >= mod);
@@ -79,4 +76,19 @@ ll power(ll a, ll b) {
         b >>= 1;
     }
     return (ans + (flag * mod)) % mod;
+}
+set <string> getPerm(string s) {
+    int n = s.size();
+    vector<int> v(n);
+    for(int i = 0; i < n; i++) v[i] = i;
+    set <string> st;
+    do{
+        string ss = s;
+        // cout << ss << " ";
+        for(int i = 0; i < n; i++){
+            ss[i] = s[v[i]];
+        }
+        st.insert(ss);
+    } while (next_permutation(v.begin(), v.end()));
+    return st;
 }

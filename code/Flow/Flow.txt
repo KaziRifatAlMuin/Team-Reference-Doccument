@@ -1,6 +1,21 @@
-Covering Problems: 
-> Maximum Independent Set(Bipartite): Largest set of nodes which do not have any edge between them. sol: V-(MaxMatching) 
-> Minimum Vertex Cover(Bipartite): -Smallest set of nodes to cover all the edges -sol: MaxMatching 
-> Minimum Edge Cover(General graph): -Smallest set of edges to cover all the nodes -sol: V-(MaxMatching) (if edge cover exists, does not exit for isolated nodes) 
-> Minimum Path Cover(Vertex disjoint) DAG: -Minimum number of vertex disjoint paths that visit all the nodes -sol: make a bipartite graph using same nodes in two sides, one side is "from" other is "to", add edges from "from" to "to", then ans is V-(MaxMatching) 
-> Minimum Path Cover(Vertex Not Disjoint) General graph: -Minimum number of paths that visit all the nodes -sol: consider cycles as nodes then it will become a path cover problem with vertex disjoint on DAG
+Covering Problems:
+- Maximum Independent Set (Bipartite): V - MaxMatching
+- Minimum Vertex Cover (Bipartite): = MaxMatching
+- Minimum Edge Cover (General): V - MaxMatching (no isolated vertices)
+- Min Path Cover (vertex-disjoint, DAG): V - MaxMatching (reduce to bipartite)
+- Min Path Cover (general): contract cycles -> DAG reduction
+Matching — problem & when:
+- Find maximum set of edges with no shared endpoints (bipartite case).
+- Use for assignment, scheduling, pairing; Kőnig gives min vertex cover from matching.
+
+Templates (how to use):
+- Kuhn: set `n,k,g`; `mt.assign(k,-1); for(v=0..n-1){used.assign(n,false); try_kuhn(v);}`
+  -> result: `mt[r]=l` or -1; complexity O(n*m).
+- Hopcroft–Karp: `HK hk(L); hk.addEdge(u,v); int M = hk.max_match();`
+  -> use `matchL`/`matchR`; complexity O(E*sqrt(V)).
+- Blossom (`code/Flow/Blossom.cpp`): `auto mate = Blossom(graph);` for general graphs.
+- Flow reduction: connect `s->L(1)`, `L->R(1)`, `R->t(1)`; run max-flow; unit flows on `L->R` are matches.
+Tips:
+- Prefer Hopcroft–Karp for bipartite; Blossom for non-bipartite.
+- Seed Kuhn with a greedy matching to speed it; use Kőnig to recover min vertex cover.
+- Keep adjacency 0-based for Kuhn/Blossom; this repo's HK is 1-based.

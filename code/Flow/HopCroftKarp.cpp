@@ -2,7 +2,8 @@
   .Complexity $O(E\sqrt V)$
   .1-indexed
   .No default constructor
-  .add single edge for (u, v)*/
+  .add single edge for (u, v)
+  Usage: `HK hk(L); hk.addEdge(u,v); int M = hk.max_match();` */
 struct HK {
   static const int inf = 1e9;
   int n;
@@ -38,7 +39,6 @@ struct HK {
     }
     return dist[0] != inf;
   }
-
   bool dfs(int u) {
     if (!u) return true;
     for (auto v : adj[u]) {
@@ -64,4 +64,3 @@ struct HK {
     return matching;
   }
 };
-

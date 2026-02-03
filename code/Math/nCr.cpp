@@ -33,6 +33,14 @@ ll catalan = (nCr(2*n, n) % mod - nCr(2*n, n+1) % mod + mod) % mod;
 // Hocky Stick Identity:
 // sum_{k=r}^{n} (k choose r) = (n+1 choose r+1)
 ll hockey_stick = nCr(n + 1, r + 1);
-// Vandermonde's Identity:
-// sum_{k=0}^{r} (m choose k)(n choose r-k) = (m+n choose r)
 ll vandermonde = nCr(m + n, r);
+ll C[N + 2][N + 2];
+void pre(){
+    C[0][0] = 1;
+    for(int n = 1; n <= N; n++){
+        C[n][0] = C[n][n] = 1;
+        for(int k = 1; k < n; k++){
+            C[n][k] = C[n - 1][k - 1] + C[n - 1][k];
+        }
+    }
+}

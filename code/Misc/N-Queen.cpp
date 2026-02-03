@@ -4,7 +4,6 @@ bool place(vector <int> &x, int row, int col) {
     }
     return true;
 }
-
 void NQueens(vector <int> &x, int row, int n) {
     for(int col = 0; col < n; col++){
         if(place(x, row, col)){
