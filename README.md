@@ -1,154 +1,178 @@
-# KUET_Anarosh Team Reference Document
+# KUET_NlogN - Team Reference Notebook
+
+[![Python](https://img.shields.io/badge/python-3%2B-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-CC--BY--SA-lightgrey)](LICENSE)
+
+A compact, LaTeX-based competitive programming reference compiled and maintained by the KUET_NlogN team.
+
+This repository contains algorithms, data-structure snippets, math notes, and a generator to produce a printable PDF team notebook.
+
+**Highlights:**
+- Clear, categorized code snippets in `code/`
+- LaTeX math notes in `math/`
+- Notebook PDF generator: `generate_pdf.py`
+
+**Quick Links:** `generate_pdf.py`, `notebook.tex`
+
+---
 
 ## Overview
 
-This repository contains the KUET_NlogN team's reference document, compiled from codes written by team members (Kazi Rifat Al Muin, Siyam Khan, Hassan Mohammad Naquibul Hoque) and most codes taken from KUET_Effervescent team members (Mehrab Hossain Opi, Arnob Sarker, Sharif Minhazul Islam).
+This repository contains the KUET_NlogN team’s competitive programming reference notebook.
+It is compiled from implementations and notes written by:
 
-The notebook includes implementations of various algorithms and data structures, along with mathematical notes and resources.
+- Kazi Rifat Al Muin
+- Hassan Mohammad Naquibul Hoque
+- Siyam Khan
 
-## Repository Structure
+The repository was initially cloned from the KUET_Effervescent team notebook and later extended and customized.
 
-- `code/`: Contains algorithm implementations organized by category
+The notebook includes:
+- Algorithm and data structure implementations
+- Mathematical formulas and theory notes
+- A LaTeX-formatted PDF suitable for programming contests
 
-- `math/`: LaTeX files for mathematical notes and formulas.
+---
 
-- `images/`: Supporting images and diagrams.
+## Quick Start (Windows / WSL / Linux)
 
-- `generate_pdf.py`: Python script to generate the PDF notebook.
+Recommended: use Windows with WSL (Ubuntu) or native Linux.
 
-- `notebook.tex`: LaTeX template for the notebook.
+### Step A — (Windows) Install WSL and Ubuntu (PowerShell as Administrator)
 
-## Generating the Team Notebook
-
-The Python script is a fork of the Stanford ICPC team's notebook generator. It hosts the team notebook with modifications: directories are sections, file names (without extensions) are subsections, and code comments support LaTeX math formatting.
-
-### Generating PDF
-
-**Requirements:**
-- [Python 2/3](https://www.python.org/)
-- [latexmk](https://www.ctan.org/pkg/latexmk/)
-
-Run the script `generate_pdf.py` to generate the PDF file. The LaTeX template `notebook.tex` handles syntax highlighting for C/C++/Java/Python. Modify `notebook.tex` and `generate_pdf.py` to change color schemes or add languages.
-
-## Using Linux Shell Commands
-
-For users on Windows, you can use Windows Subsystem for Linux (WSL) to access a Linux terminal environment. Follow these steps to set up WSL and generate the notebook.
-
-### Step 1: Install WSL on Windows
-
-1. Open PowerShell or Command Prompt as Administrator.
-2. Run the following command to enable WSL:
-   ```
-   wsl --install
-   ```
-3. Restart your computer if prompted.
-4. After restart, WSL will install Ubuntu by default. Follow the on-screen instructions to set up a username and password.
-
-### Step 2: Update WSL and Install Required Packages
-
-1. Open the WSL terminal (search for "Ubuntu" in the Start menu).
-2. Update the package list:
-   ```
-   sudo apt update
-   ```
-3. Upgrade the system:
-   ```
-   sudo apt upgrade -y
-   ```
-
-### Step 3: Install Python
-
-1. Install Python 3 (Python 2 is deprecated, but the script supports both):
-   ```
-   sudo apt install python3 -y
-   ```
-2. Verify installation:
-   ```
-   python3 --version
-   ```
-
-### Step 4: Install LaTeX and latexmk
-
-1. Install TeX Live (a comprehensive LaTeX distribution):
-   ```
-   sudo apt install texlive-full -y
-   ```
-   Note: This may take some time as it's a large package.
-2. Alternatively, for a smaller installation, install the base TeX Live and latexmk:
-   ```
-   sudo apt install texlive-latex-base texlive-latex-extra latexmk -y
-   ```
-3. Verify latexmk installation:
-   ```
-   latexmk --version
-   ```
-
-### Step 5: Generate the PDF
-
-1. Open the terminal from your folder directory
-2. Switch to Ubuntu if you are in windows.
-   ```
-   wsl -d Ubuntu
-   ```
-3. Run the Python script:
-   ```
-   python3 generate_pdf.py
-   ```
-4. The PDF should be generated in the current directory.
-
-### Troubleshooting
-
-**Issue: "pdflatex: gave an error in previous invocation" or "Nothing to do"**
-
-Latexmk caches build state and may refuse to rebuild after errors. Clean generated files and force rebuild:
+```powershell
+wsl --install
 ```
+
+Reboot if prompted and complete the Ubuntu first-time setup.
+
+### Quick switch
+```powershell
+wsl
+wsl -d Ubuntu
+exit
+```
+
+### Step B — Install system packages (Ubuntu / WSL / Linux)
+
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install python3 python3-pip latexmk texlive-latex-extra -y
+```
+
+Verify installations:
+
+```bash
+python3 --version
+latexmk --version
+```
+
+### Optional TeX installations
+
+Full TeX Live:
+
+```bash
+sudo apt install texlive-full -y
+```
+
+Smaller set (core + helpers):
+
+```bash
+sudo apt install texlive-latex-base texlive-latex-extra latexmk -y
+```
+
+---
+
+## Generate the Notebook PDF
+
+From the repository root directory, run:
+
+```bash
+python3 generate_pdf.py
+```
+
+The generated PDF will be created in the current directory (e.g., `notebook.pdf`).
+
+---
+
+## Requirements
+
+- Python 3.6+
+- `latexmk` and a TeX distribution (TeX Live recommended). For full coverage, `texlive-full`.
+
+Windows users: enable WSL and run the above install commands inside your WSL distro.
+
+---
+
+## Repository Structure (short)
+
+```
+.
+├── code/              # Algorithm implementations (by category)
+├── math/              # LaTeX mathematical notes and proofs
+├── images/            # Diagrams used in the notes
+├── generate_pdf.py    # Script to compile the notebook PDF
+├── notebook.tex       # Main LaTeX template and styling
+└── README.md
+```
+
+Open `code/` to find categorized snippets (C/C++/Python/Java) suitable for contest use.
+
+---
+
+## Troubleshooting
+
+### pdflatex error or "Nothing to do"
+
+```bash
 latexmk -C
 python3 generate_pdf.py
 ```
 
-Or use the force flag to rebuild everything:
-```
+Force rebuild:
+
+```bash
 latexmk -pdf -shell-escape -f notebook.tex
 ```
 
-**Issue: "I can't write on file `notebook.pdf`"**
+### Cannot write to `notebook.pdf`
 
-This error occurs when the PDF file is already open in a viewer and locked. To fix:
-1. Close any PDF viewer that has `notebook.pdf` open
-2. Run the script again:
-   ```
-   python3 generate_pdf.py
-   ```
-
-Alternatively, delete the old PDF before generating a new one:
-```
+```bash
 rm notebook.pdf
 python3 generate_pdf.py
 ```
 
-**Issue: "Hash: not found" error**
+On Windows PowerShell replace `rm` with `del` if needed.
 
-The original script used a custom `Hash` command that may not be available on all systems. The script has been updated to use `md5sum` (standard on Linux) with a fallback to Python's hashlib. If you encounter this error with an older version of the script, update the `generate_pdf.py` file or ensure `md5sum` is installed:
-```
+### "Hash: not found" error
+
+```bash
 sudo apt install coreutils -y
 ```
 
-**Issue: Permission denied when running the script**
+### Permission denied
 
-If you get a permission error, make the script executable:
-```
+```bash
 chmod +x generate_pdf.py
 ```
 
-**Issue: LaTeX compilation errors**
+### Missing LaTeX packages
 
-Ensure you have all required LaTeX packages. If using the minimal installation, you may need additional packages:
-```
+```bash
 sudo apt install texlive-latex-extra texlive-fonts-recommended -y
 ```
 
+---
+
+
+- Add algorithm implementations under `code/` organized by category.
+- Use clear filenames and include brief comments describing complexity and usage.
+- Update `notebook.tex` if you need to change the PDF styling or supported languages.
+
+---
+
 ## Credits
 
-- KUET_NlogNN
-- KUET_Anarosh
-- KUET_Effervescent
+- KUET_NlogN (Kazi Rifat Al Muin, Hassan Mohammad Naquibul Hoque, Siyam Khan)
+- KUET_Anarosh (Kazi Rifat Al Muin, Md Arifur Rahman, Hassan Mohammad Naquibul Hoque)
+- KUET_Effervescent (Mehrab Hossain Opi, Arnob Sarker, Sharif Minhazul Islam)
