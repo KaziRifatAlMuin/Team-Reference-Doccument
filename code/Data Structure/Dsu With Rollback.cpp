@@ -87,3 +87,4 @@ struct QueryTree {
     return ans;
   }
 };
+// need to add queries first and then call solve() to get the answer for each query.
