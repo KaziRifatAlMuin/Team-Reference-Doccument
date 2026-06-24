@@ -57,6 +57,7 @@ struct combi{
   inline mint ncr(int n, int k) { return n < k or k < 0 ? 0 : facts[n] * finvs[k] * finvs[n-k]; }
 };
 combi C(N);
+// O(log n) using Fermat's little theorem
 ll power(ll a, ll b) {
     ll ans = 1;
     bool flag = (a >= mod);

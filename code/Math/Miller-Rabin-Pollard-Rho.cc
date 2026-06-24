@@ -42,5 +42,4 @@ namespace rho {
     l.insert(l.end(), r.begin(), r.end());
     return l;
   }
-
 };

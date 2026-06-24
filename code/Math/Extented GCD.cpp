@@ -10,7 +10,6 @@ int gcdExt(int a, int b, int &x, int &y) {
     y = x1 - (a / b) * y1;
     return g;
 }
-
 // Modular inverse: returns x where (a*x) % m = 1, exists only if gcd(a,m) = 1
 int modInv(int a, int m) {
     int x, y;
