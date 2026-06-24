@@ -55,3 +55,21 @@ bool escapebfs(int sr, int sc){
     }
     return false;
 }
+// Minimum number of elements product is exactly equal to i
+sort(v.begin(), v.end());
+v.erase(unique(v.begin(), v.end()), v.end());
+for(auto x : v){
+    if(x <= n) dist[x] = 1, q.push(x);
+}
+while(!q.empty()){
+    ll cur = q.front();
+    q.pop();
+    for(auto x : v){
+        if(cur * x > n) break;
+        ll xx = cur * x;
+        if(dist[xx] == -1){
+            dist[xx] = dist[cur] + 1;
+            q.push(xx);
+        }
+    }
+}

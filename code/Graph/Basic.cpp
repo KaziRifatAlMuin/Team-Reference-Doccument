@@ -23,6 +23,30 @@ void dijkstra(int start){
         }
     }
 }
+// Bipartite Check
+bool dfs(int u, int c, int& ct0, int& ct1){
+    color[u] = c;
+    if(c) ct1++;
+    else ct0++;
+
+    bool bipartite = true;
+    for(auto v : G[u]){
+        if(color[v] == -1){
+            if(!dfs(v, !c, ct0, ct1)) bipartite = false;
+        }
+        else if(color[v] == color[u]) bipartite = false;
+    }
+    return bipartite;
+}
+// Cycle Check
+bool dfs(int u, int par = -1){
+    visited[u] = true;
+    for(auto v : G[u]){
+        if(visited[v] == true && v != par) return true;
+        if(!visited[v] && dfs(v, u)) return true; // cycle check
+    }
+    return false;
+}
 // BFS
 while(!q.empty()){
     auto[r,c,face,time] = q.front(); q.pop();
