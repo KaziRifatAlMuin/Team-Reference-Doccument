@@ -2,7 +2,6 @@ class SegmentTree{
     ll n,funcid;
     vector<ll>seg,lazy;
     vector<ll>marked;
-    ll UpdateTime=0;
     void build(vector<ll>&a, ll segid, ll segl, ll segr, ll funid){
         if(segl==segr){
             seg[segid]=a[segl];
@@ -41,8 +40,6 @@ class SegmentTree{
         PointUpdate(2*segid+1,mid+1,segr,id,x,funid);
         seg[segid]=MONOID[funid](seg[segid*2],seg[segid*2+1]);
     }
-    //RUPQ Type 01:Typical Range Update Point Query: Just Add x to [l,r]->Keep Altogether, No Complexity
-    //Overlapping is ALLOWED
     void RangeUpdate(ll segid, ll segl, ll segr, ll l, ll r, ll addval, ll funid2){
         if(segl>r||segr<l)return;
         if(segl>=l&&segr<=r){
@@ -59,7 +56,6 @@ class SegmentTree{
         ll mid=(segl+segr)/2;
         return MONOID[funid2](seg[segid],MONOID[funid2](PointQuery(segid*2,segl,mid,id,funid2),PointQuery(segid*2+1,mid+1,segr,id,funid2)));
     }
-    //RUPQ Type 02: Assignment: Overlapping must be avoided
     void RangeUpdateAssignment(ll segid, ll segl, ll segr, ll l, ll r, ll assignval){
         if(segl>r||segr<l)return;
         if(segl>=l&&segr<=r){
@@ -77,7 +73,6 @@ class SegmentTree{
         RangeUpdateAssignment(segid*2,segl,mid,l,r,assignval);
         RangeUpdateAssignment(segid*2+1,mid+1,segr,l,r,assignval);
     }
-    
     ll PointQueryAssignment(ll segid, ll segl, ll segr, ll id){
         if(segl==segr){
             return seg[segid];
@@ -96,47 +91,6 @@ class SegmentTree{
             return PointQueryAssignment(segid*2+1,mid+1,segr,id);
         }
     }
-    void RangeUpdateAssignmentOWN(ll segid, ll segl, ll segr, ll l, ll r, ll assignval){
-        if(segl>r||segr<l)return;
-        if(segl>=l&&segr<=r){
-            seg[segid]=assignval;
-            marked[segid]=UpdateTime;
-            return;
-        }
-        ll mid=(segl+segr)/2;
-        RangeUpdateAssignment(segid*2,segl,mid,l,r,assignval);
-        RangeUpdateAssignment(segid*2+1,mid+1,segr,l,r,assignval);
-    }
-    ll PointQueryAssignmentOWN(ll segid, ll segl, ll segr, ll id, ll& mx, ll& ans){
-        if(segl==segr){
-            if(marked[segid]>=mx){
-                mx=marked[segid];
-                return ans=seg[segid];
-            }
-            else return ans;
-        }
-        if(id>=segl&&id<=segr){
-            if(marked[segid]>=mx){
-                mx=marked[segid];
-                return ans=seg[segid];
-            }
-            else return ans;
-        }
-        ll mid=(segl+segr)/2;
-        if(id>=segl&&id<=mid){
-            seg[segid*2]=seg[segid];
-            marked[segid*2]=marked[segid];
-            return PointQueryAssignmentOWN(segid*2,segl,mid,id,mx,ans);
-        }
-        else if(id>=mid+1&&id<=segr){
-            seg[segid*2+1]=seg[id];
-            marked[segid*2+1]=marked[segid];
-            return PointQueryAssignmentOWN(segid*2,mid+1,segr,id,mx,ans);
-        }
-    }
-    //RANGE UPDATE RANGE QUERY: applicable for HOMOMORPHISM/DISTRIBUTIVE PROPERTY: g(f(a1,a2,...,an),x)=f(g(a1,x),g(a2,x),...,(an,x))
-    //ALSO another one if it is fixed in another way: (a1+x)+(a2+x)+...+(an+x)=(a1+a2+..+an)+x*n
-    //Range Add Update, Range MIN/MAX(/SUM) Query
     void RangeUpdateforRangeQuery(ll segid, ll segl, ll segr, ll l, ll r, ll addval){
         if(segl>r||segr<l)return;
         if(segl>=l&&segr<=r){
@@ -155,7 +109,6 @@ class SegmentTree{
         //polapaner update howa shesh; ekhon ami update hoi: Dedication for children(Not all->shobaire dite gele Bura hoye jabo TLE) :)
         seg[segid]=MONOID[funcid](seg[segid*2],seg[segid*2+1]);
     }
-    
     ll RangeQuery(ll segid, ll segl, ll segr, ll l, ll r){
         if(segl>r||segr<l)return Identity[funcid];
         if(segl>=l&&segr<=r){
@@ -168,7 +121,7 @@ class SegmentTree{
         lazy[segid]=0;
         ll mid=(segl+segr)/2;
         return MONOID[funcid](RangeQuery(segid*2,segl,mid,l,r),RangeQuery(segid*2+1,mid+1,segr,l,r));
-    }
+    } 
 public:
     SegmentTree(vector<ll>&a,ll funid){
         funcid=funid;
@@ -188,72 +141,12 @@ public:
         seg[0]=Identity[funcid];
         build(a,b,1,0,n-1,funid);
     }
-    ll RangeCalc(ll l,ll r){
-        return RangeCalc(1,0,n-1,l,r,funcid);
-    }
-    void PointUpdate(ll id, ll x){
-        PointUpdate(1,0,n-1,id,x,funcid);
-    }
-    void PointUpdate(vector<ll>&a, ll id, ll x){
-        a[id]=x;
-        PointUpdate(1,0,n-1,id,x,funcid);
-    }
-    void PointUpdate(ll*a, ll*b, ll id, ll x){
-        a[id]=x;
-        PointUpdate(1,0,n-1,id,x,funcid);
-    }
-    void RangeUpdate(ll l, ll r, ll addval, ll funid2){
-        RangeUpdate(1,0,n-1,l,r,addval,funid2);
-    }
-    ll PointQuery(ll id, ll funid2){
-        return PointQuery(1,0,n-1,id,funid2);
-    }
-    void RangeUpdateAssignment(ll l, ll r, ll assignval){
-        RangeUpdateAssignment(1,0,n-1,l,r,assignval);
-    }
-    ll PointQueryAssignment(ll id){
-        return PointQueryAssignment(1,0,n-1,id);
-    }
-    void RangeUpdateAssignmentOWN(ll l, ll r, ll assignval){
-        RangeUpdateAssignmentOWN(1,0,n-1,l,r,assignval);
-        UpdateTime++;
-    }
-    ll PointQueryAssignmentOWN(ll id, ll& mx, ll& ans){
-        return PointQueryAssignmentOWN(1,0,n-1,id,mx,ans);
-    }  
-    void RangeUpdateforRangeQuery(ll l, ll r, ll addval){
-        RangeUpdateforRangeQuery(1,0,n-1,l,r,addval);
-    }
-    ll RangeQuery(ll l, ll r){
-        return RangeQuery(1,0,n-1,l,r);
-    }
-    void ShowSegments(){
-        for(int i=0;i<seg.size();i++)cout<<seg[i]<<" ";cout<<endl;
-    }
-    void Check(vector<ll>&a){
-        for(int i=0;i<n;i++){
-            ll s=Identity[funcid];
-            for(int j=i;j<n;j++){
-                s=MONOID[funcid](s,a[j]);
-                if(s!=RangeCalc(i,j)){
-                    cout<<"WARNING: Change the TEMPLATE Quickly!!!"<<endl;
-                    return;
-                }
-            }
-        }
-        cout<<"Congrats! Your Template is Absolutely Correct!!!"<<endl;
-    }
-    void Check(ll*a, ll*b){
-        for(int i=0;i<n;i++){
-            ll s=Identity[funcid];
-            for(int j=i;j<n;j++){
-                s=MONOID[funcid](s,a[j]);
-                if(s!=RangeCalc(i,j)){
-                    cout<<"WARNING: Change the TEMPLATE Quickly!!!"<<endl;
-                    return;
-                }
-            }
-        }
-        cout<<"Congrats! Your Template is Absolutely Correct!!!"<<endl;
-    }
-}
+    ll RangeCalc(ll l,ll r){return RangeCalc(1,0,n-1,l,r,funcid);}
+    void PointUpdate(ll id, ll x){PointUpdate(1,0,n-1,id,x,funcid);}
+    void RangeUpdate(ll l, ll r, ll addval, ll funid2){RangeUpdate(1,0,n-1,l,r,addval,funid2);}
+    ll PointQuery(ll id, ll funid2){return PointQuery(1,0,n-1,id,funid2);}
+    void RangeUpdateAssignment(ll l, ll r, ll assignval){RangeUpdateAssignment(1,0,n-1,l,r,assignval);}
+    ll PointQueryAssignment(ll id){return PointQueryAssignment(1,0,n-1,id);}
+    void RangeUpdateforRangeQuery(ll l, ll r, ll addval){RangeUpdateforRangeQuery(1,0,n-1,l,r,addval);}
+    ll RangeQuery(ll l, ll r){return RangeQuery(1,0,n-1,l,r);}
+};

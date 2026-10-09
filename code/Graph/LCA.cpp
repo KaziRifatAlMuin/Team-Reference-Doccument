@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 class LCA_BinaryLifting
 {
 public:
@@ -8,7 +5,6 @@ public:
     vector<vector<int>> adj;
     vector<vector<int>> ancestor;
     vector<int> depth;
-
     LCA_BinaryLifting(int n) : n(n)
     {
         adj.resize(n + 1);
@@ -26,10 +22,7 @@ public:
         ancestor[node][0] = parent;
         for (int i = 1; i < max_log; i++)
         {
-            if (ancestor[node][i - 1] != -1)
-            {
-                ancestor[node][i] = ancestor[ancestor[node][i - 1]][i - 1];
-            }
+            if (ancestor[node][i - 1] != -1) ancestor[node][i] = ancestor[ancestor[node][i - 1]][i - 1];
         }
         for (int neighbor : adj[node])
         {
@@ -47,21 +40,12 @@ public:
     }
     int get_lca(int u, int v)
     {
-        if (depth[u] < depth[v])
-        {
-            swap(u, v);
-        }
+        if (depth[u] < depth[v]) swap(u, v);
         for (int i = max_log - 1; i >= 0; i--)
         {
-            if (ancestor[u][i] != -1 && depth[ancestor[u][i]] >= depth[v])
-            {
-                u = ancestor[u][i];
-            }
+            if (ancestor[u][i] != -1 && depth[ancestor[u][i]] >= depth[v]) u = ancestor[u][i];
         }
-        if (u == v)
-        {
-            return u;
-        }
+        if (u == v) return u;
         for (int i = max_log - 1; i >= 0; i--)
         {
             if (ancestor[u][i] != ancestor[v][i])
@@ -79,8 +63,7 @@ public:
             if (k & (1 << i))
             {
                 u = ancestor[u][i];
-                if (u == -1)
-                    break;
+                if (u == -1) break;
             }
         }
         return u;
@@ -96,25 +79,13 @@ public:
         int dist_u_lca = depth[u] - depth[lca];
         int dist_lca_v = depth[v] - depth[lca];
         int total_distance = dist_u_lca + dist_lca_v;
-        if (k > total_distance)
-        {
-            return -1;
-        }
-        if (k <= dist_u_lca)
-        {
-            return get_kth_ancestor(u, k);
-        }
-        else
-        {
-            return get_kth_ancestor(v, dist_u_lca + dist_lca_v - k);
-        }
+        if (k > total_distance) return -1;
+        if (k <= dist_u_lca) return get_kth_ancestor(u, k);
+        else return get_kth_ancestor(v, dist_u_lca + dist_lca_v - k);
     }
     int get_ancestor_depth(int u, int target_depth)
     {
-        if (depth[u] < target_depth)
-        {
-            return -1;
-        }
+        if (depth[u] < target_depth) return -1;
         int diff = depth[u] - target_depth;
         return get_kth_ancestor(u, diff);
     }
