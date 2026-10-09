@@ -1,9 +1,9 @@
-# KUET_NlogN - Team Reference Notebook
+# KUET_FinalSlash - Team Reference Notebook
 
 [![Python](https://img.shields.io/badge/python-3%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-CC--BY--SA-lightgrey)](LICENSE)
 
-A compact, LaTeX-based competitive programming reference compiled and maintained by the KUET_NlogN team.
+A compact, LaTeX-based competitive programming reference compiled and maintained by the KUET_FinalSlash team.
 
 This repository contains algorithms, data-structure snippets, math notes, and a generator to produce a printable PDF team notebook.
 
@@ -17,13 +17,6 @@ This repository contains algorithms, data-structure snippets, math notes, and a 
 ---
 
 ## Overview
-
-This repository contains the KUET_NlogN team’s competitive programming reference notebook.
-It is compiled from implementations and notes written by:
-
-- Kazi Rifat Al Muin
-- Hassan Mohammad Naquibul Hoque
-- Siyam Khan
 
 The repository was initially cloned from the KUET_Effervescent team notebook and later extended and customized.
 
@@ -173,6 +166,7 @@ sudo apt install texlive-latex-extra texlive-fonts-recommended -y
 
 ## Credits
 
+- KUET_FinalSlash (Kazi Rifat Al Muin, Siyam Khan, Sk. Nazmus Salehin Nirob)
 - KUET_NlogN (Kazi Rifat Al Muin, Hassan Mohammad Naquibul Hoque, Siyam Khan)
 - KUET_Anarosh (Kazi Rifat Al Muin, Md Arifur Rahman, Hassan Mohammad Naquibul Hoque)
 - KUET_Effervescent (Mehrab Hossain Opi, Arnob Sarker, Sharif Minhazul Islam)

@@ -42,8 +42,20 @@ def get_style(filename):
 
 # TODO: check if this is everything we need
 def texify(s):
-    #s = s.replace('\'', '\\\'')
-    #s = s.replace('\"', '\\\"')
+    replacements = {
+        '\\': r'\textbackslash{}',
+        '&': r'\&',
+        '%': r'\%',
+        '$': r'\$',
+        '#': r'\#',
+        '_': r'\_',
+        '{': r'\{',
+        '}': r'\}',
+        '~': r'\textasciitilde{}',
+        '^': r'\textasciicircum{}',
+    }
+    for old, new in replacements.items():
+        s = s.replace(old, new)
     return s
 
 def get_tex(sections):
@@ -51,7 +63,7 @@ def get_tex(sections):
     for (section_name, subsections) in sections:
         tex += '\\section{%s}\n' % texify(section_name)
         for (relative_path, subsection_name, number_of_lines, hash_value) in subsections:
-            tex += '\\subsection{\\small %s  \\scriptsize [%s lines] - %s}\n' % (texify(subsection_name), number_of_lines, hash_value)
+            tex += '\\subsection{%s [%s lines] - %s}\n' % (texify(subsection_name), number_of_lines, hash_value)
             tex += '\\inputminted{%s}{%s}\n' % (get_style(relative_path), '"' + relative_path + '"')
         tex += '\n'
     return tex
